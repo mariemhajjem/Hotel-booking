@@ -21,11 +21,14 @@ const clerkWebhooks = async (req, res) => {
             username: data.first_name + " " + data.last_name,
             image: data.image_url,
         }
+        console.log("Webhook Data:", data, type);
 
         // Switch Cases for differernt Events
         switch (type) {
             case "user.created": {
-                await User.create(userData); break;
+                await User.create(userData); 
+                console.log("User Created:", userData);
+                break;
             }
             case "user.updated": {
                 await User.findByIdAndUpdate(data.id, userData);
@@ -33,6 +36,7 @@ const clerkWebhooks = async (req, res) => {
             }
             case "user.deleted": {
                 await User.findByIdAndDelete(data.id);
+                console.log("User Deleted:", data.id);
                 break;
             }
             default:
