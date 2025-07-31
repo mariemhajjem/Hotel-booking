@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const userSchema = mongoose.Schema({
     _id: {
         type: String, required: true
@@ -13,6 +14,7 @@ const userSchema = mongoose.Schema({
     recentSearchedCities: [{ type: String, required: true }],
 }, { timestamps: true }
 );
+
 const User = mongoose.model("User", userSchema);
-I
+
 export default User;
