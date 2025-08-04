@@ -15,8 +15,7 @@ const clerkWebhooks = async (req, res) => {
         await whook.verify(JSON.stringify(req.body), headers)
         // Getting Data from request body
         const { data, type } = req.body
-
-
+        
         // Switch Cases for differernt Events
         switch (type) {
             case "user.created": {
@@ -41,6 +40,7 @@ const clerkWebhooks = async (req, res) => {
             }
             case "user.deleted": {
                 await User.findByIdAndDelete(data.id);
+                console.log("User Deleted:", data.id);
                 break;
             }
             default:
