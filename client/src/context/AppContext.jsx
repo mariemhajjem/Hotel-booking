@@ -21,7 +21,20 @@ export const AppProvider = ({ children }) => {
     const [isOwner, setIsOwner] = useState(false);
     const [showHotelReg, setShowHotelReg] = useState(false);
     const [searchedCities, setSearchedCities] = useState([]);
-
+    const [rooms, setRooms] = useState([]);
+    
+    const fetchRooms = async () => {
+        try {
+            const { data } = await axios.get('/api/rooms', { headers: { Authorization: `Bearer ${await getToken()}` } });
+            if (data.success) {
+                setRooms(data.rooms);
+            } else {
+                toast.error("Failed to fetch rooms");
+            }
+        } catch (error) {
+            toast.error(error.message);
+        }
+    }
 
     const fetchUser = async () => {
         try {
@@ -48,9 +61,15 @@ export const AppProvider = ({ children }) => {
         }
     }, [user])
 
+    useEffect(() => {
+        if (user) {
+            fetchRooms()
+        }
+    }, [user])
+
     const value = {
-        currency, navigate, user, getToken, isOwner, setIsOwner, axios, 
-        showHotelReg, setShowHotelReg, searchedCities, setSearchedCities
+        currency, navigate, user, getToken, isOwner, setIsOwner, axios,
+        showHotelReg, setShowHotelReg, searchedCities, setSearchedCities, rooms
     }
 
     return (
