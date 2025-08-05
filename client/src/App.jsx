@@ -13,7 +13,7 @@ import { Dashboard } from './pages/hotelOwner/Dashboard'
 import { AddRoom } from './pages/hotelOwner/AddRoom'
 import { ListRoom } from './pages/hotelOwner/ListRoom'
 import { useAppContext } from './context/AppContext'
-import Loader from './components/loader'
+import Loader from './components/Loader'
 
 const App = () => {
   const isOwnerPath = useLocation().pathname.includes("owner")
