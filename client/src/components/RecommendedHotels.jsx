@@ -15,7 +15,7 @@ const RecommendedHotels = () => {
         filterHotels();
     }, [searchedCities, rooms]);  
 
-    return recommended.length && (
+    return recommended.length > 0 && (
         <div className='flex flex-col items-center px-6 md:px-16 lg:px-24 bg-slate-50 py-20'>
 
             <Title title='Recommended Hotels' subTitle='Discover our handpicked selection of exceptional properties around the world...' />
