@@ -62,10 +62,8 @@ export const AppProvider = ({ children }) => {
     }, [user])
 
     useEffect(() => {
-        if (user) {
-            fetchRooms()
-        }
-    }, [user])
+        fetchRooms()
+    }, [])
 
     const value = {
         currency, navigate, user, getToken, isOwner, setIsOwner, axios,
