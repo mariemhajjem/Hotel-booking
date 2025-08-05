@@ -5,8 +5,6 @@ import { assets } from '../assets/assets'
 import Title from '../components/Title'
 import { useAppContext } from '../context/AppContext';
 
-
-
 export const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const { axios, getToken, user, currency } = useAppContext();
@@ -16,6 +14,21 @@ export const MyBookings = () => {
       const { data } = await axios.get('/api/bookings/user', { headers: { Authorization: `Bearer ${await getToken()}` } })
       if (data.success) {
         setBookings(data.bookings)
+      } else {
+        toast.error(data.message)
+      }
+
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
+
+  const handlePayment = async (bookingId) => {
+    try {
+      const { data } = await axios.post('/api/bookings/stripe-payment', { bookingId }, { headers: { Authorization: `Bearer ${await getToken()}` } })
+      console.log("Stripe Payment Data:", data);
+      if (data.success) {
+        window.location.href = data.url; // Redirect to Stripe Checkout
       } else {
         toast.error(data.message)
       }
@@ -42,11 +55,9 @@ export const MyBookings = () => {
           <div className="w-1/3">Date & Timings</div>
           <div className="w-1/3">Payment</div>
 
-
         </div>
         {bookings.map((booking) => (
           <div key={booking._id} className='grid grid-cols-1 md:grid-cols-[3fr_2fr_1fr] w-full border-b border-gray-300 py-6 first:border-t'>
-
 
             {/*-----hotel details}----*/}
             <div className='flex flex-col md:flex-row'>
@@ -86,10 +97,6 @@ export const MyBookings = () => {
                   {new Date(booking.checkOutDate).toDateString()}
                 </p>
               </div>
-
-
-
-
             </div>
 
 
@@ -106,30 +113,16 @@ export const MyBookings = () => {
 
               {!booking.isPaid && (
                 <button className='px-4 py-1.5 mt-4 text-xs border border-gray-400
-    rounded-full hover:bg-gray-50 transition-all cursor-pointer'>
-
+                rounded-full hover:bg-gray-50 transition-all cursor-pointer'
+                  onClick={() => handlePayment(booking._id)}>
                   Pay Now
                 </button>
               )}
 
-
             </div>
           </div>
-
-
-
         ))}
-
-
-
       </div>
-
-
-
-
-
-
-
     </div>
   )
 }
