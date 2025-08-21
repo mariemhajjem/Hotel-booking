@@ -1,12 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import Title from '../../components/Title'
 import { assets } from '../../assets/assets'
 import { useAppContext } from '../../context/AppContext'
-import toast from 'react-hot-toast'
 
 export const AddRoom = () => {
   const { axios, getToken } = useAppContext()
   const [loading, setLoading] = useState(false)
+  const [hotels, setHotels] = useState([]);
+  const [selectedHotel, setSelectedHotel] = useState("");
+
+
+  useEffect(() => {
+    const fetchHotels = async () => {
+      try {
+        const token = await getToken();
+        const { data } = await axios.get("/api/hotels/byowner", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (data.success) setHotels(data.hotels);
+        else toast.error(data.message || "Failed to fetch hotels");
+      } catch (err) {
+        toast.error(err.message);
+      }
+    };
+    fetchHotels();
+  }, []);
 
   const [images, setImages] = useState({
     1: null,
@@ -28,7 +47,7 @@ export const AddRoom = () => {
   })
   const onSubmitHandler = async (e) => {
     e.preventDefault()
-    if (!inputs.roomType || !inputs.pricePerNight || Object.values(images).every(image => !image)) {
+    if (!inputs.roomType || !selectedHotel || !inputs.pricePerNight || Object.values(images).every(image => !image)) {
       toast.error('Please fill all fields and upload images')
       return;
     }
@@ -40,6 +59,7 @@ export const AddRoom = () => {
       // Converting Amenities to Array & keeping only enabled Amenities
       const amenities = Object.keys(inputs.amenities).filter(key => inputs.amenities[key])
       formData.append('amenities', JSON.stringify(amenities))
+      formData.append("hotelId", selectedHotel);
       // Adding Images to FormData
       Object.keys(images).forEach((key) => {
         images[key] && formData.append('images', images[key])
@@ -94,6 +114,21 @@ export const AddRoom = () => {
         ))}
       </div>
 
+      <div className="flex-1 max-w-48">
+        <p className="text-gray-800 mt-4">Select Hotel</p>
+        <select
+          value={selectedHotel}
+          onChange={(e) => setSelectedHotel(e.target.value)}
+          className="border opacity-70 border-gray-300 mt-1 rounded p-2 w-full">
+          <option value="">Select Hotel</option>
+          {hotels.map((hotel) => (
+            <option key={hotel._id} value={hotel._id}>
+              {hotel.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className='w-full flex max-sm:flex-col sm:gap-4 mt-4'>
         <div className='flex-1 max-w-48'>
           <p className='text-gray-800 mt-4'>Room Type</p>
@@ -130,7 +165,7 @@ export const AddRoom = () => {
         ))}
       </div>
       <button className='bg-primary text-white px-8 py-2 rounded mt-8 cursor-pointer' disabled={loading}>
-        { loading ? 'Adding Room...' : 'Add Room'}
+        {loading ? 'Adding Room...' : 'Add Room'}
       </button>
 
     </form>

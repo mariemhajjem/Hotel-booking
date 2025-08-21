@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     _id: {
         type: String, required: true
     },
@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
         type: String, enum: ["user", "hotelOwner"],
         default: "user"
     },
-    recentSearchedCities: [{ type: String, required: true }],
+    recentSearchedCities: [{ type: String, default: [] }],
 }, { timestamps: true }
 );
 

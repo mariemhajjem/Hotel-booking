@@ -22,7 +22,9 @@ export const AppProvider = ({ children }) => {
     const [showHotelReg, setShowHotelReg] = useState(false);
     const [searchedCities, setSearchedCities] = useState([]);
     const [rooms, setRooms] = useState([]);
-    
+    const [showRoomUpdate, setShowRoomUpdate] = useState(false) 
+    const [updatedRoomId, setUpdatedRoomId] = useState(null)
+
     const fetchRooms = async () => {
         try {
             const { data } = await axios.get('/api/rooms', { headers: { Authorization: `Bearer ${await getToken()}` } });
@@ -30,6 +32,9 @@ export const AppProvider = ({ children }) => {
                 setRooms(data.rooms);
             } else {
                 toast.error("Failed to fetch rooms");
+                
+                // toast.loading("Retrying...");
+
             }
         } catch (error) {
             toast.error(error.message);
@@ -67,7 +72,8 @@ export const AppProvider = ({ children }) => {
 
     const value = {
         currency, navigate, user, getToken, isOwner, setIsOwner, axios,
-        showHotelReg, setShowHotelReg, searchedCities, setSearchedCities, rooms
+        showHotelReg, setShowHotelReg, searchedCities, setSearchedCities, rooms, showRoomUpdate, setShowRoomUpdate,
+        updatedRoomId, setUpdatedRoomId
     }
 
     return (
